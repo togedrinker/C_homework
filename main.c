@@ -3,13 +3,13 @@
 
 小组成员：
 
-合作方式：
+合作方式：使用 GitHub Desktop 和 GitHub 进行可视化代码版本管理和团队合作。
 
-GitHub 地址：
+GitHub 地址：https://github.com/togedrinker/C_homework
 
 */
 
-#define _CRT_SECURE_NO_WARNINGS 1 // 避免vs中scanf报错
+#define _CRT_SECURE_NO_WARNINGS 1 // 避免vs中 scanf 报错
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -71,36 +71,25 @@ day：一年总天数
 */
 void print_month(int *year, int *month, int *day1, int *day)
 {
-	printf("一\t二\t三\t四\t五\t六\t日\n");
-	for (int m = 1; m <= *month; m++)
-	{
-		switch (m)
-		{
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			*day1 = 30;
-			break;
-		case 2:
-			if ((*year % 4 == 0 && *year % 100 == 0) || (*year % 400 == 0))
-			{
-				*day1 = 29;
-			}
-			else
-			{
-				*day1 = 28;
-			}
-			break;
-		default:
-			*day1 = 31;
-			break;
-		}
-		if (m < *month)
-		{
-			*day += *day1; // 将输入年中的每月统计到总天数中
-		}
-	}
+    printf("一\t二\t三\t四\t五\t六\t日\n");
+
+    int daysInMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // 每月天数，索引从1开始
+
+    // 判断是否为闰年，更新二月的天数
+    if (((*year % 4 == 0 && *year % 100 != 0) || *year % 400 == 0))
+    {
+        daysInMonth[2] = 29; // 闰年二月有29天
+    }
+
+    for (int m = 1; m <= *month; m++)
+    {
+        *day1 = daysInMonth[m]; // 获取当前月的天数
+
+        if (m < *month)
+        {
+            *day += *day1; // 将当前月天数累加到总天数中
+        }
+    }
 	int t = *day % 7;
 	for (int i = 0; i < t; i++)
 	{

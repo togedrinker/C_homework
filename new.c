@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 // 蔡勒公式计算星期几
 int ZellerCongruence(int year, int month, int day) {

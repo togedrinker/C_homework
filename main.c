@@ -10,10 +10,7 @@
 武艺仰（负责（2）打印年历）
 曹启航（负责（1）计算未来天数和星期）
 
-<<<<<<< Updated upstream
-合作方式：使用 GitHub Desktop 和 GitHub 进行可视化代码版本管理和团队合作。
-=======
-合作方式：使用vs code编码，使用gcc编译运行，使用gethub进行云端交流与合作
+合作方式：使用vs code编码，使用gcc编译运行，使用github进行云端交流与合作
 >>>>>>> Stashed changes
 
 GitHub 地址：https://github.com/togedrinker/C_homework

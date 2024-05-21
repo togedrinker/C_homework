@@ -25,6 +25,7 @@ int main(void)
 	int year = 0;
 	int month = 0;
 
+    // 输入要查询的年份和月份
 	printf("请输入年份:");
 	scanf("%d", &year);
 	printf("请输入月份:");
@@ -42,7 +43,7 @@ int main(void)
 }
 
 /*
-功能：判断当年是否是闰年。
+功能：判断当年是否是闰年
 year：输入年份
 day：一年总天数
 */
@@ -91,6 +92,7 @@ void print_month(int *year, int *month, int *day1, int *day)
         }
     }
 	int t = *day % 7;
+
 	for (int i = 0; i < t; i++)
 	{
 		printf("\t");
@@ -106,11 +108,3 @@ void print_month(int *year, int *month, int *day1, int *day)
 	}
 	printf("\n");
 }
-
-
-// ____________
-// |          |
-// |          |
-// ------------
-// |     |     |
-

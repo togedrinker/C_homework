@@ -136,55 +136,6 @@ int ZellerCongruence(int year, int month, int day)
 	return h;
 }
 
-// 打印年历
-void print_year_calendar(int year)
-{
-	FILE *fp = fopen("cal.txt", "w");
-	if (fp == NULL)
-	{
-		printf("Error opening file.\n");
-		return;
-	}
-
-	fprintf(fp, "Year Calendar: %d\n", year);
-
-	for (int month = 1; month <= 12; month++)
-	{
-		fprintf(fp, "---------------------\n");
-		fprintf(fp, "|      Month %2d     |\n", month);
-		fprintf(fp, "---------------------\n");
-		fprintf(fp, "Sun Mon Tue Wed Thu Fri Sat\n");
-
-		int startDay = ZellerCongruence(year, month, 1);
-		int daysInMonth = (month == 2 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) ? 29 : 28;
-		int day = 1;
-
-		for (int i = 0; i < 6; i++)
-		{
-			for (int j = 0; j < 7; j++)
-			{
-				if (i == 0 && j < startDay)
-				{
-					fprintf(fp, "    ");
-				}
-				else if (day <= daysInMonth)
-				{
-					fprintf(fp, "%4d", day);
-					day++;
-				}
-				else
-				{
-					fprintf(fp, "    ");
-				}
-			}
-			fprintf(fp, "\n");
-		}
-	}
-
-	fclose(fp);
-	printf("完成打印，文件名为\"cal.txt\"，请到当前文件夹下查看。\n");
-}
-
 /*
 功能：判断当年是否是闰年
 year：输入年份
@@ -252,13 +203,11 @@ void print_month(int *year, int *month, int *day1, int *day)
 	printf("\n");
 }
 
-// 判断是否为闰年
 bool isLeapYear(int year)
 {
 	return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-// 蔡勒公式计算星期几（0=星期日，1=星期一，...，6=星期六）
 int zellerFormula(int day, int month, int year)
 {
 	if (month < 3)
@@ -268,54 +217,47 @@ int zellerFormula(int day, int month, int year)
 	}
 	int century = year / 100;
 	int a = year % 100;
-	int h = (day + (13 * (month + 1)) / 5 + a + a / 4 + century / 4 - 2 * century) % 7;
-	if (h < 0) // 确保结果为非负数
+	int h = (day + 2 * month + 3 * (month + 1) / 5 + a + a / 4 + century / 4 - 2 * century + 1) % 7;
+	if (h < 0)
 		h = h + 7;
 	return h;
 }
 
 void printCalendar(int year, FILE *file)
 {
-	const wchar_t *weekdays[] = {"日", "一", "二", "三", "四", "五", "六"};
-	const wchar_t *months[] = {"一月", "二月", "三月", "四月", "五月", "六月",
-							   "七月", "八月", "九月", "十月", "十一月", "十二月"};
+	fprintf(file, "%48d\n", year);
+	const char *weekdays[] = {"日", "一", "二", "三", "四", "五", "六"};
+	const char *months[] = {"一月", "二月", "三月", "四月", "五月", "六月",
+							"七月", "八月", "九月", "十月", "十一月", "十二月"};
 	int daysInMonth[] = {31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30,
 						 31, 31, 30, 31, 30, 31};
 
 	for (int m = 0; m < 12; m += 3)
 	{
-		// 打印月份标题
+
 		for (int i = 0; i < 3; i++)
 		{
-			fprintf(file, "%25s", months[m + i]);
+			fprintf(file, "%20s", months[m + i]);
 			if (i < 2)
 			{
-				fprintf(file, "\t\t"); // 调整月份间的分隔空间
+				fprintf(file, "\t\t");
 			}
 		}
 		fprintf(file, "\n");
-
-		// 打印星期标题
-		for (int week = 0; week < 3; week++)
+		for (int i = 0; i < 3; i++)
 		{
-			fprintf(file, " ");
-			for (int w = 0; w < 7; w++)
+			fprintf(file, "Sun Mon Tue Wed Tur Fri Sat");
+			if (i < 2)
 			{
-				fprintf(file, "%4s ", weekdays[w]);
+				fprintf(file, "\t");
 			}
-			if (week < 2)
-				fprintf(file, "\t\t"); // 调整月份间的分隔空间
 		}
 		fprintf(file, "\n");
-
-		// 确定每个月  的第一天是星期几
 		int firstDayWeeks[3];
 		for (int i = 0; i < 3 && m + i < 12; i++)
 		{
 			firstDayWeeks[i] = zellerFormula(1, m + i + 1, year);
 		}
-
-		// 打印日历体
 		int day[3] = {1, 1, 1};
 		bool monthFinished[3] = {false, false, false};
 
@@ -329,10 +271,9 @@ void printCalendar(int year, FILE *file)
 					{
 						if (weekday == firstDayWeeks[i])
 						{
-
 							fprintf(file, "%4d", day[i]);
 							day[i]++;
-							firstDayWeeks[i] = -1; // 已打印了第一天的日期，重置为-1以避免再次检测
+							firstDayWeeks[i] = -1;
 						}
 						else if (firstDayWeeks[i] == -1 && day[i] <= daysInMonth[m + i])
 						{
@@ -345,7 +286,7 @@ void printCalendar(int year, FILE *file)
 						}
 						else
 						{
-							fprintf(file, "\t\t"); // 打印空格以对齐 -----
+							fprintf(file, "    ");
 						}
 					}
 				}
@@ -353,30 +294,13 @@ void printCalendar(int year, FILE *file)
 				{
 					for (int weekday = 0; weekday < 7; weekday++)
 					{
-						fprintf(file, "\t\t"); // 月份已结束，打印空格以对齐 -----
+						fprintf(file, "    ");
 					}
 				}
 
 				if (i < 2)
 				{
-					fprintf(file, "\t"); // 分隔月份
-				}
-			}
-			fprintf(file, "\n");
-		}
-
-		// 打印分隔线
-		if (m < 9)
-		{
-			for (int i = 0; i < 3 && m + i < 12; i++)
-			{
-				for (int j = 0; j < 8; j++)
-				{
-					fprintf(file, "=");
-				}
-				if (i < 2)
-				{
-					fprintf(file, "\t"); // 分隔月份
+					fprintf(file, "\t");
 				}
 			}
 			fprintf(file, "\n");
@@ -400,6 +324,7 @@ int twice(void)
 
 	printCalendar(year, file);
 	fclose(file);
-	printf("日历已保存到 cal.txt 文件中。\n");
+	printf("完成打印，文件名为\"cal.txt\"，请复制文件绝对路径，输入到浏览器导航栏查看网页。\n");
+	printf("注意：文件不支持记事本打开，请使用浏览器进行查看！");
 	return 0;
 }

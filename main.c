@@ -76,12 +76,15 @@ int main(void)
 			int day1 = 0;
 			print_month(&year, &month, &day1, &day);
 		}
-		else
+		else if (choice == 4)
 		{
 			printf("欢迎使用！下次再见！\n");
 			return 0;
 		}
-		printf("请按回车继续！");
+		else{
+			printf("输入有误，请重新输入。");
+		}
+		printf("请按回车继续！\n");
 		system("pause");
 		system("cls");
 	}
